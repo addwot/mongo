@@ -1,6 +1,9 @@
-integration_name: mongoDB yaml
-
-instances:
+services:
+- type: pserv
+  name: mongo
+  plan: standard
+  env: docker
+  instances:
   - name: all
     # Available commands are "all", "metrics", and "inventory"
     command: all
