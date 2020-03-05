@@ -3,12 +3,3 @@ services:
   name: mongo
   plan: standard
   env: docker
-  instances:
-  - name: all
-    # Available commands are "all", "metrics", and "inventory"
-    command: all
-    arguments:
-      # The mongos to connect to
-      host: mongodb-web.onrender.com
-      # The port the mongos is running on
-      port: 27017
