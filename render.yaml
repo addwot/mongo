@@ -1,5 +1,5 @@
 services:
-- type: pserv
+- type: yaml
   name: mongo
   plan: standard
   env: docker
@@ -41,6 +41,3 @@ services:
       # The number of entities to collect metrics for concurrently. Tunable to
       # limit CPU and memory usage
       concurrent_collections: 50
-    labels:
-      env: production
-      label: mongo-cluster-1
