@@ -3,3 +3,58 @@ services:
   name: mongo
   plan: standard
   env: docker
+  mongo-primary:
+    container_name: mongo-primary
+    hostname: mongo-primary
+    image: mongo:4.2
+    volumes:
+      - $HOME/.dockerMongoRepl/primary/data/db:/data/db
+      - $HOME/.dockerMongoRepl/keyfile:/data/keyfile
+    extra_hosts:
+      - "10.100.0.32:0.0.0.0"
+    networks:
+      - mongo-cluster
+    ports:
+      - 27017:27017
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: changeme
+    command: --bind_ip_all --auth --keyFile /data/keyfile/mongo-cluster-key --replSet rs0 --enableMajorityReadConcern false
+  mongo-secondary:
+    container_name: mongo-secondary
+    hostname: mongo-secondary
+    image: mongo:4.2
+    volumes:
+      - $HOME/.dockerMongoRepl/secondary/data/db:/data/db
+      - $HOME/.dockerMongoRepl/keyfile:/data/keyfile
+    depends_on:
+      - mongo-primary
+    extra_hosts:
+      - ""10.100.0.32:0.0.0.0""
+    networks:
+      - mongo-cluster
+    ports:
+      - 27018:27017
+    restart: always
+    command: --bind_ip_all -auth --keyFile /data/keyfile/mongo-cluster-key --replSet rs0 --enableMajorityReadConcern false
+  mongo-arbiter:
+    container_name: mongo-arbiter
+    hostname: mongo-arbiter
+    image: mongo:4.2
+    volumes:
+      - $HOME/.dockerMongoRepl/arbiter/data/arb:/data/arb
+      - $HOME/.dockerMongoRepl/keyfile:/data/keyfile
+    depends_on:
+      - mongo-primary
+    extra_hosts:
+      - ""10.100.0.32:0.0.0.0""
+    networks:
+      - mongo-cluster
+    ports:
+      - 27019:27017
+    restart: always
+    command: --bind_ip_all --auth --keyFile /data/keyfile/mongo-cluster-key --replSet rs0 --enableMajorityReadConcern false
+
+networks:
+  mongo-cluster:
